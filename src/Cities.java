@@ -91,7 +91,7 @@ public enum Cities {
                         dist = 0;
                         break;
                     case Falls:
-                        dist = 502;
+                        dist = 560;
                         break;
                     default:
                         break;
