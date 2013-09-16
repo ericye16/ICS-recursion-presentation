@@ -8,6 +8,9 @@ public enum Cities {
     Boston,
     Falls;
 
+    /*
+    So much manual data entry
+     */
     public int distance(Cities other) {
         int dist = -1;
         switch (this) {
@@ -106,7 +109,7 @@ public enum Cities {
                         break;
                 }
                 break;
-        }
+        } // if we don't have it here, check the reverse
         if (dist == -1) return other.distance(this);
         else return dist;
     }

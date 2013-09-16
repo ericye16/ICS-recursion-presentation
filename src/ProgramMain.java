@@ -16,8 +16,7 @@ public class ProgramMain {
         if (S.size() == 1) {
             ArrayList<Cities> path = new ArrayList<Cities>();
             path.add(el);
-            CostAndPath costAndPath = new CostAndPath(el, Cities.Home.distance(el), path);
-            return costAndPath;   //from start to city L, change vars later
+            return new CostAndPath(el, Cities.Home.distance(el), path);   //from start to city L, change vars later
         } else {
             //make a new arraylist and remove l
             ArrayList<Cities> S_minusL = (ArrayList<Cities>) S.clone();
@@ -44,9 +43,7 @@ public class ProgramMain {
     public static void main(String[] args) {
         System.out.println("It's go time!");
         ArrayList<Cities> allCities = new ArrayList<Cities>();
-        for (Cities city : Cities.values()) {
-            allCities.add(city);
-        }
+        Collections.addAll(allCities, Cities.values());
 
         //take out city one
         allCities.remove(Cities.Home);
@@ -65,9 +62,11 @@ public class ProgramMain {
             }
         }
 
-        System.out.println(minCost); // should be 1932
+        System.out.printf("The total distance is %d km.\n", minCost); // should be 1932
+        System.out.println("The path is: ");
+        assert path != null;
         for (Cities c:path) {
-            System.out.print(c);
+            System.out.print(c + " ");
         }
 
     }
