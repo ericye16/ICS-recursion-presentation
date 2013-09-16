@@ -11,54 +11,40 @@ import java.lang.String;
 
 public class ProgramMain {
 
-    public static int HeldKarpEqn( ArrayList<Cities> S , Cities el){
-        assert(S.contains(el));
-        if (S.size() == 1){
-            return Cities.Home.distance(el);   //from start to city L, change vars later
-        }
-        else {
+    public static CostAndPath HeldKarpEqn(ArrayList<Cities> S, Cities el) {
+        assert (S.contains(el));
+        if (S.size() == 1) {
+            ArrayList<Cities> path = new ArrayList<Cities>();
+            path.add(el);
+            CostAndPath costAndPath = new CostAndPath(el, Cities.Home.distance(el), path);
+            return costAndPath;   //from start to city L, change vars later
+        } else {
             //make a new arraylist and remove l
             ArrayList<Cities> S_minusL = (ArrayList<Cities>) S.clone();
             S_minusL.remove(el);
+
+            ArrayList<Cities> newPath = null;
+
             int min = Integer.MAX_VALUE;
-            for (Cities m :S_minusL) {
+            for (Cities m : S_minusL) {
+                CostAndPath costAndPath;
                 int dist;
-                dist = HeldKarpEqn(S_minusL,m) + m.distance(el);
+                costAndPath = HeldKarpEqn(S_minusL, m);
+                dist = costAndPath.cost + m.distance(el);
                 if (dist < min) {
                     min = dist;
+                    newPath = (ArrayList<Cities>) costAndPath.path.clone();
+                    newPath.add(el);
                 }
             }
-            return min;
+            return new CostAndPath(el,min, newPath);
         }
     }
-
-    /*
-    public static void HeldKarpDriver (){
-        HashSet subCities = new HashSet();
-        subCities = ();
-
-        int minC;
-        int newC;
-        int el;
-        int i;
-
-        minC = 10000000;
-
-        i = HeldKarpEqn(subCities, el);
-        newC = i + cityA.distance(cityB); //change cities later
-        if (newC<minC){
-            minC = newC;
-
-        }
-
-    }
-    */
-
 
     public static void main(String[] args) {
         System.out.println("It's go time!");
         ArrayList<Cities> allCities = new ArrayList<Cities>();
-        for (Cities city:Cities.values()) {
+        for (Cities city : Cities.values()) {
             allCities.add(city);
         }
 
@@ -66,15 +52,37 @@ public class ProgramMain {
         allCities.remove(Cities.Home);
         //find a nice l
         int minCost = Integer.MAX_VALUE;
-        for (Cities el:allCities) {
+        ArrayList<Cities> path = null;
+        for (Cities el : allCities) {
             int cost;
-            cost = HeldKarpEqn(allCities,el) + Cities.Home.distance(el);
+            CostAndPath costAndPath;
+            costAndPath = HeldKarpEqn(allCities, el);
+            cost = costAndPath.cost + Cities.Home.distance(el);
             if (cost < minCost) {
                 minCost = cost;
+                path = (ArrayList<Cities>) costAndPath.path.clone();
+                path.add(Cities.Home);
             }
         }
 
-        System.out.println(minCost);
+        System.out.println(minCost); // should be 1932
+        for (Cities c:path) {
+            System.out.print(c);
+        }
+
     }
 
+
+    static class CostAndPath {
+        public ArrayList<Cities> path;
+        public Cities city;
+        public int cost;
+
+        public CostAndPath(Cities c, int co, ArrayList<Cities> p) {
+            path = p;
+            city = c;
+            cost = co;
+        }
+
+    }
 }
