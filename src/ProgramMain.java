@@ -11,12 +11,27 @@ import java.lang.String;
 
 public class ProgramMain {
 
+    private static HashMap heldKarpEqnCache = new HashMap();
+
     public static CostAndPath HeldKarpEqn(ArrayList<Cities> S, Cities el) {
         assert (S.contains(el));
+
+        final ArrayList<Cities> finalS = (ArrayList<Cities>) S.clone();
+        final HashSet<Cities> finalSSet = new HashSet<Cities>(finalS);
+        final Cities finalEl = el;
+        SetAndEl inputVars = new SetAndEl(finalSSet, finalEl);
+        CostAndPath cachedCP = (CostAndPath) heldKarpEqnCache.get(inputVars);
+        if (cachedCP != null) {
+            System.out.print("Cache hit!");
+            return cachedCP;
+        }
+
+        CostAndPath singleTonCP;
         if (S.size() == 1) {
             ArrayList<Cities> path = new ArrayList<Cities>();
             path.add(el);
-            return new CostAndPath(el, Cities.Home.distance(el), path);   //from start to city L, change vars later
+            singleTonCP = new CostAndPath(el, Cities.Home.distance(el), path);
+
         } else {
             //make a new arraylist and remove l
             ArrayList<Cities> S_minusL = (ArrayList<Cities>) S.clone();
@@ -36,8 +51,10 @@ public class ProgramMain {
                     newPath.add(el);
                 }
             }
-            return new CostAndPath(el,min, newPath);
+            singleTonCP = new CostAndPath(el,min, newPath);
         }
+        heldKarpEqnCache.put(inputVars, singleTonCP);
+        return singleTonCP;   //from start to city L, change vars later
     }
 
     public static void main(String[] args) {
@@ -71,7 +88,6 @@ public class ProgramMain {
 
     }
 
-
     static class CostAndPath {
         public ArrayList<Cities> path;
         public Cities city;
@@ -82,6 +98,17 @@ public class ProgramMain {
             city = c;
             cost = co;
         }
+    }
 
+    static class SetAndEl {
+        final public HashSet<Cities> S;
+        final public Cities El;
+        public SetAndEl (final HashSet<Cities> nS, final Cities nEl) {
+            S = nS;
+            El = nEl;
+        }
+        public int hashCode() {
+            return S.hashCode() + El.hashCode();
+        }
     }
 }
